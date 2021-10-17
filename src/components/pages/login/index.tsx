@@ -1,25 +1,42 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx } from '../common/Regx'; //contactNoRegx
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Inputs } from './type';
+import { postRequest } from '../../../services/axiosService';
+import { notify, toastComponent } from '../common/notification';
 
 const Login = () => {
 
   const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const reqData = {
+      email_id: data.emailId,
+      password: data.password,
+    };
+    const response: any = await postRequest('do-login', reqData);
+    if (response.status === "success") {
+      notify('success', response.message);
+    } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
+      response.data.forEach((values: string) => {
+        notify('error', values);
+      });
+    } else {
+      notify('error', response.message);
+    }
   };
 
   const handleFormCross = (value: any) => {
-    reset({ ...getValues(), [value]: ''}, { keepErrors: true });
+    reset({ ...getValues(), [value]: '' }, { keepErrors: true });
   };
 
   return (
     <Fragment>
+      {toastComponent()}
       <div id="appCapsule">
         <div className="section mt-2 text-center">
+          {/* {response} */}
           <h1>Log in</h1>
           <h4>Fill the form to log in</h4>
         </div>
@@ -77,9 +94,12 @@ const Login = () => {
               </div>
               <div><a href="/forgotpassword" className="text-muted">Forgot Password?</a></div>
             </div>
-            <div className="form-button-group transparent">
+            <div className="form-links mt-2">
               <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
             </div>
+            {/* <div className="form-button-group transparent">
+              <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
+            </div> */}
           </form>
         </div>
       </div>

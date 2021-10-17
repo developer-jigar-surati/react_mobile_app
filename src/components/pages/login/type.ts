@@ -1,5 +1,5 @@
 export type Inputs = {
-    mobileNo: string,
+    mobileNo?: string,
     emailId: string,
     password: string,
 };

@@ -1,23 +1,51 @@
 import { Fragment } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx, contactNoRegx, onlyAllowRegx } from '../common/Regx';
+import { onlyAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
+import { notify, toastComponent } from '../common/notification';
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Inputs } from './type';
+import { postRequest } from '../../../services/axiosService';
 
 const Register = () => {
 
-  const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
+  const { register, reset, handleSubmit, watch, getValues, setValue, formState: { errors } } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const reqData = {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email_id: data.emailId,
+      mobile_no: data.mobileNo,
+      password: data.password,
+    };
+    const response: any = await postRequest('do-register', reqData);
+    if (response.status === "success") {
+      notify('success', response.message);
+    } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
+      response.data.forEach((values: string) => {
+        notify('error', values);
+      });
+    } else {
+      notify('error', response.message);
+    }
+  };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
-  };
-  
   const handleFormCross = (value: any) => {
-    reset({ ...getValues(), [value]: ''}, { keepErrors: true });
+    reset({ ...getValues(), [value]: '' }, { keepErrors: true });
   };
+
+  // const handleMobileNoChange = (e: any) => {
+  //   if (!contactNoRegx.test(e.target.value)) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   return (
     <Fragment>
+      {toastComponent()}
       {/* <Loader /> */}
       <div className="appHeader no-border transparent position-absolute">
         <div className="pageTitle" />
@@ -38,19 +66,35 @@ const Register = () => {
               <div className="card-body">
                 <div className="form-group basic">
                   <div className="input-wrapper">
-                    <label className="label" htmlFor="name">Name</label>
-                    <input maxLength={50} type="text" className="form-control" id="name" autoComplete="off" placeholder="Your Name"
-                      {...register("name", {
+                    <label className="label" htmlFor="firstName">First Name</label>
+                    <input maxLength={50} type="text" className="form-control" id="firstName" autoComplete="off" placeholder="Your First Name"
+                      {...register("firstName", {
                         required: true,
-                        pattern: { value: onlyAllowRegx, message: "Alphanumeric, space, hyphen (-) and underscore (_) only allow." },
-                        maxLength: { value: 50, message: "Maximum 50 character allow." }
+                        pattern: { value: onlyAllowRegx, message: onlyAllowMessage },
+                        maxLength: { value: 50, message: maxCharAllowMessage(50) }
                       })}
                     />
-                    {(typeof watch("name") !== 'undefined' && watch("name") !== '') && <InputCrossIcon onClick={() => handleFormCross('name')} />}
+                    {(typeof watch("firstName") !== 'undefined' && watch("firstName") !== '') && <InputCrossIcon onClick={() => handleFormCross('firstName')} />}
                   </div>
-                  {errors?.name?.type === 'required' && <span className="text-danger">This field is required</span>}
-                  {errors?.name?.type === 'pattern' && <span className="text-danger">{errors.name.message}</span>}
-                  {errors?.name?.type === 'maxLength' && <span className="text-danger">{errors.name.message}</span>}
+                  {errors?.firstName?.type === 'required' && <span className="text-danger">This field is required</span>}
+                  {errors?.firstName?.type === 'pattern' && <span className="text-danger">{errors.firstName.message}</span>}
+                  {errors?.firstName?.type === 'maxLength' && <span className="text-danger">{errors.firstName.message}</span>}
+                </div>
+                <div className="form-group basic">
+                  <div className="input-wrapper">
+                    <label className="label" htmlFor="lastName">Last Name</label>
+                    <input maxLength={50} type="text" className="form-control" id="lastName" autoComplete="off" placeholder="Your Last Name"
+                      {...register("lastName", {
+                        required: true,
+                        pattern: { value: onlyAllowRegx, message: onlyAllowMessage },
+                        maxLength: { value: 50, message: maxCharAllowMessage(50) }
+                      })}
+                    />
+                    {(typeof watch("lastName") !== 'undefined' && watch("lastName") !== '') && <InputCrossIcon onClick={() => handleFormCross('lastName')} />}
+                  </div>
+                  {errors?.lastName?.type === 'required' && <span className="text-danger">This field is required</span>}
+                  {errors?.lastName?.type === 'pattern' && <span className="text-danger">{errors.lastName.message}</span>}
+                  {errors?.lastName?.type === 'maxLength' && <span className="text-danger">{errors.lastName.message}</span>}
                 </div>
                 <div className="form-group basic">
                   <div className="input-wrapper">
@@ -58,9 +102,11 @@ const Register = () => {
                     <input maxLength={15} type="text" className="form-control" id="mobileNo" autoComplete="off" placeholder="Your Mobile No"
                       {...register("mobileNo", {
                         required: true,
-                        pattern: { value: contactNoRegx, message: "Invalid Mobile No." },
-                        maxLength: { value: 15, message: "Maximum 15 character allow." }
-                      })} />
+                        pattern: { value: contactNoRegx, message: inValidMessage('Mobile No') },
+                        maxLength: { value: 15, message: maxCharAllowMessage(15) }
+                      })}
+                    // onChange={(e) => handleMobileNoChange(e)}
+                    />
                     {(typeof watch("mobileNo") !== 'undefined' && watch("mobileNo") !== '') && <InputCrossIcon onClick={() => handleFormCross('mobileNo')} />}
                   </div>
                   {errors?.mobileNo?.type === 'required' && <span className="text-danger">This field is required</span>}
@@ -73,8 +119,8 @@ const Register = () => {
                     <input maxLength={255} type="text" className="form-control" id="emailId" autoComplete="off" placeholder="Your e-mail"
                       {...register("emailId", {
                         required: true,
-                        pattern: { value: emailRegx, message: "Invalid Email Id" },
-                        maxLength: { value: 255, message: "Maximum 255 character allow." }
+                        pattern: { value: emailRegx, message: inValidMessage('Email Id') },
+                        maxLength: { value: 255, message: maxCharAllowMessage(255) }
                       })} />
                     {(typeof watch("emailId") !== 'undefined' && watch("emailId") !== '') && <InputCrossIcon onClick={() => handleFormCross('emailId')} />}
                   </div>
@@ -88,8 +134,8 @@ const Register = () => {
                     <input maxLength={25} minLength={8} type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
                       {...register("password", {
                         required: true,
-                        minLength: { value: 8, message: "Minimum 8 character allow." },
-                        maxLength: { value: 25, message: "Maximum 25 character allow." }
+                        minLength: { value: 8, message: maxCharAllowMessage(8) },
+                        maxLength: { value: 25, message: maxCharAllowMessage(25) }
                       })} />
                     {(typeof watch("password") !== 'undefined' && watch("password") !== '') && <InputCrossIcon onClick={() => handleFormCross('password')} />}
                   </div>
@@ -112,9 +158,12 @@ const Register = () => {
                 </div>
               </div>
             </div>
-            <div className="form-button-group transparent">
+            <div className="form-links mt-2">
               <button type="submit" className="btn btn-primary btn-block btn-lg">Register</button>
             </div>
+            {/* <div className="form-button-group transparent">
+              <button type="submit" className="btn btn-primary btn-block btn-lg">Register</button>
+            </div> */}
           </form>
         </div>
       </div>

@@ -1,9 +1,9 @@
 {
     "name": "Create React App Sample",
     "short_name": "React App",
-    "start_url": "http://localhost:3000/",
+    "start_url": "http://app.jigscoding.com/",
     "display": "standalone",
-    "scope" : "http://localhost:3000/",
+    "scope" : "http://app.jigscoding.com/",
     "background_color": "#000000",
     "theme_color": "#000000",
     "orientation": "portrait",

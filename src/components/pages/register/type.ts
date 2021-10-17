@@ -1,5 +1,6 @@
 export type Inputs = {
-    name: string,
+    firstName: string,
+    lastName: string,
     mobileNo: string,
     emailId: string,
     password: string,

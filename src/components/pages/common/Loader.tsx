@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { BASE_URL } from '../../../global/global';
+import { BASE_URL } from '../../../global';
 
 const Loader = () => {
     return (
