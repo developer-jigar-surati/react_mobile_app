@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx, contactNoRegx, onlyAllowRegx } from '../common/Regx';
 import { onlyAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
@@ -10,7 +10,7 @@ import { postRequest } from '../../../services/axiosService';
 
 const Register = () => {
 
-  const { register, reset, handleSubmit, watch, getValues, setValue, formState: { errors } } = useForm<Inputs>();
+  const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const reqData = {
       first_name: data.firstName,
@@ -22,6 +22,9 @@ const Register = () => {
     const response: any = await postRequest('do-register', reqData);
     if (response.status === "success") {
       notify('success', response.message);
+      setTimeout(() => {
+        reset({});
+      }, 1000);
     } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
       response.data.forEach((values: string) => {
         notify('error', values);

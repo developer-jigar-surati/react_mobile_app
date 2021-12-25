@@ -1,4 +1,4 @@
-import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
+import { ToastContainer, toast, Slide } from 'react-toastify'; // Zoom, Flip, Bounce
 import 'react-toastify/dist/ReactToastify.css';
 
 export const notify = (type: any, msg: any) => {

@@ -6,18 +6,18 @@ import { Inputs } from './type';
 import { postRequest } from '../../../services/axiosService';
 import { notify, toastComponent } from '../common/notification';
 
-const Login = () => {
+const Forgotpassword = () => {
 
   const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const reqData = {
       email_id: data.emailId,
-      password: data.password,
     };
-    const response: any = await postRequest('do-login', reqData);
+    const response: any = await postRequest('forgotpassword', reqData);
     if (response.status === "success") {
       notify('success', response.message);
+      reset({});
     } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
       response.data.forEach((values: string) => {
         notify('error', values);
@@ -37,29 +37,13 @@ const Login = () => {
       <div id="appCapsule">
         <div className="section mt-2 text-center">
           {/* {response} */}
-          <h1>Log in</h1>
-          <h4>Fill the form to log in</h4>
+          <h1>Forgot password</h1>
+          <h4>Type your e-mail to reset your password</h4>
         </div>
         <div className="section mb-5 p-2">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="card">
               <div className="card-body">
-                {/* <div className="form-group basic">
-                  <div className="input-wrapper">
-                    <label className="label" htmlFor="mobileNo">Mobile No</label>
-                    <input maxLength={15} type="text" className="form-control" id="mobileNo" autoComplete="off" placeholder="Your Mobile No"
-                      {...register("mobileNo", {
-                        required: true,
-                        pattern: { value: contactNoRegx, message: "Invalid Mobile No." },
-                        maxLength: { value: 15, message: "Maximum 15 character allow." }
-                      })} />
-                    {(typeof watch("mobileNo") !== 'undefined' && watch("mobileNo") !== '') && <InputCrossIcon onClick={() => handleFormCross('mobileNo')} />}
-                  </div>
-                  {errors?.mobileNo?.type === 'required' && <span className="text-danger">This field is required</span>}
-                  {errors?.mobileNo?.type === 'pattern' && <span className="text-danger">{errors.mobileNo.message}</span>}
-                  {errors?.mobileNo?.type === 'maxLength' && <span className="text-danger">{errors.mobileNo.message}</span>}
-                </div>
-                <div className='hr-or'></div> */}
                 <div className="form-group basic">
                   <div className="input-wrapper">
                     <label className="label" htmlFor="emailId">E-mail</label>
@@ -75,31 +59,16 @@ const Login = () => {
                   {errors?.emailId?.type === 'pattern' && <span className="text-danger">{errors.emailId.message}</span>}
                   {errors?.emailId?.type === 'maxLength' && <span className="text-danger">{errors.emailId.message}</span>}
                 </div>
-                <div className="form-group basic">
-                  <div className="input-wrapper">
-                    <label className="label" htmlFor="password1">Password</label>
-                    <input type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
-                      {...register("password", {
-                        required: true,
-                      })} />
-                    {(typeof watch("password") !== 'undefined' && watch("password") !== '') && <InputCrossIcon onClick={() => handleFormCross('password')} />}
-                  </div>
-                  {errors?.password?.type === 'required' && <span className="text-danger">This field is required</span>}
-                </div>
               </div>
             </div>
             <div className="form-links mt-2">
               <div>
-                <a href="/register">Register Now</a>
+                <a href="/">Go back to login</a>
               </div>
-              <div><a href="/forgotpassword" className="text-muted">Forgot Password?</a></div>
             </div>
             <div className="form-links mt-2">
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
+              <button type="submit" className="btn btn-primary btn-block btn-lg">Reset Password</button>
             </div>
-            {/* <div className="form-button-group transparent">
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
-            </div> */}
           </form>
         </div>
       </div>
@@ -107,4 +76,4 @@ const Login = () => {
   );
 }
 
-export default Login;
+export default Forgotpassword;

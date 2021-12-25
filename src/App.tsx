@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import {
   SIGNUP,
   SIGNIN,
+  FORGOT_PASSWORD,
+  VERIFY,
+  VERIFICATION_TOKEN,
   NOT_FOUND
 } from './routes/routes';
 // Routes
@@ -11,7 +14,10 @@ import {
 // Components
 import Register from "./components/pages/register";
 import Login from "./components/pages/login";
+import Forgotpassword from "./components/pages/forgotpassword";
+import Verify from './components/pages/verifyEmail';
 import NotFound from './components/pages/notfound';
+
 // Components
 
 const App = () => {
@@ -28,6 +34,16 @@ const App = () => {
             exact
             path={SIGNIN}
             render={() => <Login />}
+          />
+          <Route
+            exact
+            path={FORGOT_PASSWORD}
+            render={() => <Forgotpassword />}
+          />
+          <Route
+            exact
+            path={`${VERIFY}${VERIFICATION_TOKEN}`}
+            render={() => <Verify />}
           />
           <Route
             exact
