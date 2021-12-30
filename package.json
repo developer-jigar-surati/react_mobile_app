@@ -1,6 +1,6 @@
 {
   "name": "mobile-typescript-app",
-  "homepage": "http://localhost:3000/",
+  "homepage": "http://app.jigscoding.com/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

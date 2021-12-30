@@ -34,6 +34,14 @@ const Forgotpassword = () => {
   return (
     <Fragment>
       {toastComponent()}
+      <div className="appHeader no-border transparent position-absolute">
+        <div className="pageTitle" />
+        <div className="right">
+          <a href="/" className="headerButton">
+            Login
+          </a>
+        </div>
+      </div>
       <div id="appCapsule">
         <div className="section mt-2 text-center">
           {/* {response} */}
@@ -61,11 +69,11 @@ const Forgotpassword = () => {
                 </div>
               </div>
             </div>
-            <div className="form-links mt-2">
+            {/* <div className="form-links mt-2">
               <div>
                 <a href="/">Go back to login</a>
               </div>
-            </div>
+            </div> */}
             <div className="form-links mt-2">
               <button type="submit" className="btn btn-primary btn-block btn-lg">Reset Password</button>
             </div>

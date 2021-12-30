@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx, contactNoRegx, onlyAllowRegx } from '../common/Regx';
-import { onlyAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
+import { onlyAllowMessage, minCharAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
 import { notify, toastComponent } from '../common/notification';
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -137,7 +137,7 @@ const Register = () => {
                     <input maxLength={25} minLength={8} type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
                       {...register("password", {
                         required: true,
-                        minLength: { value: 8, message: maxCharAllowMessage(8) },
+                        minLength: { value: 8, message: minCharAllowMessage(8) },
                         maxLength: { value: 25, message: maxCharAllowMessage(25) }
                       })} />
                     {(typeof watch("password") !== 'undefined' && watch("password") !== '') && <InputCrossIcon onClick={() => handleFormCross('password')} />}
