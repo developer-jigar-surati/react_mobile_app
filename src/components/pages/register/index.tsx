@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx, contactNoRegx, onlyAllowRegx } from '../common/Regx';
 import { onlyAllowMessage, minCharAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
@@ -9,9 +9,11 @@ import { Inputs } from './type';
 import { postRequest } from '../../../services/axiosService';
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
 
   const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setLoading(true);
     const reqData = {
       first_name: data.firstName,
       last_name: data.lastName,
@@ -21,15 +23,18 @@ const Register = () => {
     };
     const response: any = await postRequest('do-register', reqData);
     if (response.status === "success") {
+      setLoading(false);
       notify('success', response.message);
       setTimeout(() => {
         reset({});
       }, 1000);
     } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
+      setLoading(false);
       response.data.forEach((values: string) => {
         notify('error', values);
       });
     } else {
+      setLoading(false);
       notify('error', response.message);
     }
   };
@@ -49,7 +54,6 @@ const Register = () => {
   return (
     <Fragment>
       {toastComponent()}
-      {/* <Loader /> */}
       <div className="appHeader no-border transparent position-absolute">
         <div className="pageTitle" />
         <div className="right">
@@ -153,7 +157,7 @@ const Register = () => {
                         required: true,
                       })} />
                     <label className="form-check-label" htmlFor="termandcondition">
-                      I agree <a href="/#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and
+                      I agree <a href="/register/#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and
                         conditions</a>
                     </label>
                   </div>
@@ -162,7 +166,12 @@ const Register = () => {
               </div>
             </div>
             <div className="form-links mt-2">
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Register</button>
+              <button
+                type="submit"
+                className={loading ? "btn btn-primary btn-block btn-lg disabled" : "btn btn-primary btn-block btn-lg"}
+              >
+                {loading ? <>Please Wait...</> : <>Register</>}
+              </button>
             </div>
             {/* <div className="form-button-group transparent">
               <button type="submit" className="btn btn-primary btn-block btn-lg">Register</button>

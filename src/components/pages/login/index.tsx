@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
 import { emailRegx } from '../common/Regx'; //contactNoRegx
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -8,21 +8,27 @@ import { notify, toastComponent } from '../common/notification';
 
 const Login = () => {
 
+  const [loading, setLoading] = useState(false);
+
   const { register, reset, handleSubmit, watch, getValues, formState: { errors } } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setLoading(true);
     const reqData = {
       email_id: data.emailId,
       password: data.password,
     };
     const response: any = await postRequest('do-login', reqData);
     if (response.status === "success") {
+      setLoading(false);
       notify('success', response.message);
     } else if ((response.status === "validationfailed") && (typeof response.data !== 'undefined' && response.data.length > 0)) {
+      setLoading(false);
       response.data.forEach((values: string) => {
         notify('error', values);
       });
     } else {
+      setLoading(false);
       notify('error', response.message);
     }
   };
@@ -95,7 +101,12 @@ const Login = () => {
               <div><a href="/forgotpassword" className="text-muted">Forgot Password?</a></div>
             </div>
             <div className="form-links mt-2">
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
+              <button
+                type="submit"
+                className={loading ? "btn btn-primary btn-block btn-lg disabled" : "btn btn-primary btn-block btn-lg"}
+              >
+                {loading ? <>Please Wait...</> : <>Log in</>}
+              </button>
             </div>
             {/* <div className="form-button-group transparent">
               <button type="submit" className="btn btn-primary btn-block btn-lg">Log in</button>
