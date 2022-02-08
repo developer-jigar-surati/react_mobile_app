@@ -1,10 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
-import { emailRegx } from '../common/Regx'; //contactNoRegx
+import { emailRegx, passwordRegx } from '../common/Regx'; //contactNoRegx
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Inputs } from './type';
 import { postRequest } from '../../../services/axiosService';
 import { notify, toastComponent } from '../common/notification';
+import { minCharAllowMessage, maxCharAllowMessage } from '../common/errorMessage';
 
 const Login = () => {
 
@@ -73,7 +74,7 @@ const Login = () => {
                       {...register("emailId", {
                         required: true,
                         pattern: { value: emailRegx, message: "Invalid Email Id" },
-                        maxLength: { value: 255, message: "Maximum 255 character allow." }
+                        maxLength: { value: 255, message: maxCharAllowMessage(255) }
                       })} />
                     {(typeof watch("emailId") !== 'undefined' && watch("emailId") !== '') && <InputCrossIcon onClick={() => handleFormCross('emailId')} />}
                   </div>
@@ -87,10 +88,16 @@ const Login = () => {
                     <input type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
                       {...register("password", {
                         required: true,
+                        pattern: { value: passwordRegx, message: "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character." },
+                        minLength: { value: 8, message: minCharAllowMessage(8) },
+                        maxLength: { value: 25, message: maxCharAllowMessage(25) }
                       })} />
                     {(typeof watch("password") !== 'undefined' && watch("password") !== '') && <InputCrossIcon onClick={() => handleFormCross('password')} />}
                   </div>
                   {errors?.password?.type === 'required' && <span className="text-danger">This field is required</span>}
+                  {errors?.password?.type === 'pattern' && <span className="text-danger">{errors.password.message}</span>}
+                  {errors?.password?.type === 'minLength' && <span className="text-danger">{errors.password.message}</span>}
+                  {errors?.password?.type === 'maxLength' && <span className="text-danger">{errors.password.message}</span>}
                 </div>
               </div>
             </div>

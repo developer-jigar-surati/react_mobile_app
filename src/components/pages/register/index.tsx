@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import InputCrossIcon from '../common/InputCrossIcon';
-import { emailRegx, contactNoRegx, onlyAllowRegx } from '../common/Regx';
+import { emailRegx, contactNoRegx, onlyAllowRegx, passwordRegx } from '../common/Regx';
 import { onlyAllowMessage, minCharAllowMessage, maxCharAllowMessage, inValidMessage } from '../common/errorMessage';
 import { notify, toastComponent } from '../common/notification';
 
@@ -138,15 +138,17 @@ const Register = () => {
                 <div className="form-group basic">
                   <div className="input-wrapper">
                     <label className="label" htmlFor="password1">Password</label>
-                    <input maxLength={25} minLength={8} type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
+                    <input type="password" className="form-control" id="password" autoComplete="off" placeholder="Your password"
                       {...register("password", {
                         required: true,
+                        pattern: { value: passwordRegx, message: "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character." },
                         minLength: { value: 8, message: minCharAllowMessage(8) },
                         maxLength: { value: 25, message: maxCharAllowMessage(25) }
                       })} />
                     {(typeof watch("password") !== 'undefined' && watch("password") !== '') && <InputCrossIcon onClick={() => handleFormCross('password')} />}
                   </div>
                   {errors?.password?.type === 'required' && <span className="text-danger">This field is required</span>}
+                  {errors?.password?.type === 'pattern' && <span className="text-danger">{errors.password.message}</span>}
                   {errors?.password?.type === 'minLength' && <span className="text-danger">{errors.password.message}</span>}
                   {errors?.password?.type === 'maxLength' && <span className="text-danger">{errors.password.message}</span>}
                 </div>
